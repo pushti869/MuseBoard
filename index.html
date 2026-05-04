@@ -7,237 +7,123 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="Style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
-        /* --- RESET & VARIABLES --- */
-        :root {
-            --bg-color: #fdfcf8; /* Soft Cream */
-            --text-main: #2c2c2c;
-            --text-muted: #767676;
-            --accent: #e63946; /* Subtle red for save button */
-            --card-bg: #ffffff;
-            --nav-height: 80px;
-            --font-serif: 'Playfair Display', serif;
-            --font-sans: 'Inter', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            font-family: var(--font-sans);
-            color: var(--text-main);
-            padding-top: var(--nav-height);
-        }
-
-        /* --- NAVIGATION --- */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: var(--nav-height);
-            background: rgba(253, 252, 248, 0.95);
-            backdrop-filter: blur(5px);
-            display: flex;
+        /* ── User Badge ── */
+        #userBadge {
+            display: none;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            z-index: 100;
-            border-bottom: 1px solid rgba(0,0,0,0.03);
-        }
-
-        .logo {
-            font-family: var(--font-serif);
-            font-size: 1.8rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            color: var(--text-main);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo span {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-        }
-
-        .search-bar {
-            background: #efefef;
-            border-radius: 30px;
-            padding: 12px 24px;
-            width: 40%;
-            max-width: 600px;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-bar input {
-            background: transparent;
-            border: none;
-            outline: none;
-            width: 100%;
-            font-size: 1rem;
-            font-family: var(--font-sans);
-            color: var(--text-main);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            align-items: center;
-        }
-
-        .nav-btn {
-            text-decoration: none;
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: 0.2s;
-        }
-
-        .nav-btn.primary {
-            background-color: var(--text-main);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-        }
-
-        .nav-btn.primary:hover {
-            background-color: #000;
-            transform: translateY(-1px);
-        }
-
-        /* --- FILTER TAGS --- */
-        .filters {
-            display: flex;
-            gap: 15px;
-            padding: 20px 40px;
-            overflow-x: auto;
-            scrollbar-width: none; /* Hide scrollbar Firefox */
-        }
-        .filters::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
-
-        .filter-tag {
-            padding: 8px 18px;
-            border: 1px solid #e0e0e0;
-            border-radius: 20px;
-            background: white;
-            color: var(--text-main);
-            font-size: 0.9rem;
-            white-space: nowrap;
+            gap: 9px;
+            background: var(--card, #fff);
+            border: 1px solid var(--border, #e0e0e0);
+            border-radius: 50px;
+            padding: 5px 13px 5px 5px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.12);
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .filter-tag.active, .filter-tag:hover {
-            background: var(--text-main);
-            color: white;
-            border-color: var(--text-main);
-        }
-
-        /* --- MASONRY GRID --- */
-        .gallery-container {
-            padding: 20px 40px;
-            column-count: 4;
-            column-gap: 20px;
-        }
-
-        @media (max-width: 1200px) { .gallery-container { column-count: 3; } }
-        @media (max-width: 800px) { .gallery-container { column-count: 2; padding: 10px 20px;} }
-        @media (max-width: 500px) { .gallery-container { column-count: 1; } }
-
-        .pin {
-            break-inside: avoid;
-            margin-bottom: 20px;
             position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            background: var(--card-bg);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
-            cursor: zoom-in;
+            animation: badgeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+            transition: box-shadow 0.2s;
+        }
+        #userBadge:hover { box-shadow: 0 6px 24px rgba(230,57,70,0.18); }
+        #userBadge.visible { display: flex; }
+
+        @keyframes badgeIn {
+            from { opacity: 0; transform: scale(0.85) translateY(-6px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0);    }
         }
 
-        .pin:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        .pin img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* --- OVERLAY & TEXT --- */
-        .pin-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 15px;
-        }
-
-        .pin:hover .pin-overlay {
-            opacity: 1;
-        }
-
-        .save-btn {
-            align-self: flex-end;
-            background-color: #e63946;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 24px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .save-btn:hover {
-            background-color: #d62839;
-        }
-
-        .pin-info {
-            padding: 12px;
-        }
-
-        .pin-title {
-            font-family: var(--font-serif);
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .pin-author {
-            font-size: 0.85rem;
-            color: var(--text-muted);
+        .avatar-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e63946, #ff9a6c);
+            color: #fff;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(230,57,70,0.3);
+            user-select: none;
         }
 
-        .avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: #ddd;
+        .badge-email {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text, #222);
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
+        /* Dropdown */
+        .badge-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: var(--card, #fff);
+            border: 1px solid var(--border, #e0e0e0);
+            border-radius: 14px;
+            box-shadow: 0 10px 32px rgba(0,0,0,0.16);
+            min-width: 175px;
+            overflow: hidden;
+            z-index: 9999;
+            animation: dropIn 0.18s ease both;
+        }
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        #userBadge:hover .badge-dropdown,
+        #userBadge:focus-within .badge-dropdown { display: block; }
+
+        .dropdown-item {
+            padding: 11px 15px;
+            font-size: 0.86rem;
+            color: var(--text, #222);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            transition: background 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+        .dropdown-item:hover { background: rgba(230,57,70,0.07); }
+        .dropdown-item.logout {
+            color: #e63946;
+            border-top: 1px solid var(--border, #e0e0e0);
+            font-weight: 600;
+        }
+        .dropdown-item svg { flex-shrink: 0; opacity: 0.8; }
+
+        [data-theme="dark"] #userBadge {
+            background: #12141f;
+            border-color: #2b3350;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+        }
+
+        [data-theme="dark"] .badge-email,
+        [data-theme="dark"] .dropdown-item {
+            color: #ebefff;
+        }
+
+        [data-theme="dark"] .badge-dropdown {
+            background: #141928;
+            border-color: #2d374b;
+            box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+        }
+
+        [data-theme="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+
+        /* Hide auth nav links when logged in */
+        .nav-links.logged-in .auth-only { display: none !important; }
     </style>
 </head>
 <body>
@@ -249,102 +135,549 @@
         </a>
 
         <div class="search-bar">
-            <input type="text" placeholder="Search for 'Minimalist Interior' or 'Art'...">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search notes...">
         </div>
 
-        <div class="nav-links">
-            <a href="#" class="nav-btn">Log in</a>
-            <a href="#" class="nav-btn primary">Sign up</a>
+        <div class="nav-links" id="navLinks">
+            <button id="themeToggle" class="icon-btn" title="Toggle Dark Mode">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <!-- Hidden once logged in -->
+            <a href="login.html" class="nav-btn auth-only">Login</a>
+            <a href="signup.html" class="nav-btn auth-only">Signup</a>
+
+            <!-- User Badge (shown when logged in) -->
+            <div id="userBadge" tabindex="0">
+                <div class="avatar-circle" id="avatarInitial">?</div>
+                <span class="badge-email" id="badgeEmail">user@example.com</span>
+
+                <div class="badge-dropdown">
+                    <div class="dropdown-item logout" id="logoutBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Sign Out
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
+    <section class="hero">
+        <div class="hero-copy">
+            <p class="hero-label">Create your mood board</p>
+            <h1>Collect beautiful ideas and pin what inspires you.</h1>
+            <div class="hero-actions">
+                <button id="heroAddBtn" class="nav-btn primary"><i class="fa-solid fa-plus"></i> Create Pin</button>
+                <a href="saved.html" class="nav-btn">View saved</a>
+            </div>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span id="heroTotalCount">0</span>
+                <p>Total Pins</p>
+            </div>
+            <div class="stat-card">
+                <span id="heroSavedCount">0</span>
+                <p>Saved Pins</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Filter Tags -->
-    <div class="filters">
-        <div class="filter-tag active">All</div>
-        <div class="filter-tag">Minimalist</div>
-        <div class="filter-tag">Interior Design</div>
-        <div class="filter-tag">Aesthetics</div>
-        <div class="filter-tag">Photography</div>
-        <div class="filter-tag">Fashion</div>
-        <div class="filter-tag">Architecture</div>
-        <div class="filter-tag">Nature</div>
+    <div class="filter-row">
+        <div class="filters" id="categoryFilters">
+            <a href="category.html?category=All" class="filter-tag active" data-cat="All">All</a>
+            <a href="category.html?category=Minimalist" class="filter-tag" data-cat="Minimalist">Minimalist</a>
+            <a href="category.html?category=Interior%20Design" class="filter-tag" data-cat="Interior Design">Interior Design</a>
+            <a href="category.html?category=Aesthetics" class="filter-tag" data-cat="Aesthetics">Aesthetics</a>
+            <a href="category.html?category=Photography" class="filter-tag" data-cat="Photography">Photography</a>
+            <a href="category.html?category=Fashion" class="filter-tag" data-cat="Fashion">Fashion</a>
+            <a href="category.html?category=Architecture" class="filter-tag" data-cat="Architecture">Architecture</a>
+            <a href="category.html?category=Nature" class="filter-tag" data-cat="Nature">Nature</a>
+        </div>
+        <div class="sort-group">
+            <label for="sortOrder">Sort by</label>
+            <select id="sortOrder" class="form-control">
+                <option value="new">Newest</option>
+                <option value="old">Oldest</option>
+            </select>
+        </div>
     </div>
 
     <!-- Masonry Grid -->
-    <div class="gallery-container">
+    <div class="gallery-container" id="boardContainer"></div>
+    
+    <div id="emptyState" class="hidden-el empty-state">
+        No notes found. Create one!
+    </div>
 
-        <!-- Card 1 -->
-        <div class="pin">
-            <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Interior">
-            <div class="pin-overlay">
-                <div></div> <!-- Spacer -->
-                <button class="save-btn">Save</button>
+    <button id="backToTop" class="back-to-top hidden-el" title="Back to top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <div id="previewModal" class="preview-modal hidden-el">
+        <div class="preview-modal-card">
+            <button class="close-modal preview-close"><i class="fa-solid fa-times"></i></button>
+            <img id="previewImage" src="" alt="Preview" class="preview-image">
+            <div class="preview-details">
+                <p id="previewCategory" class="preview-category"></p>
+                <p id="previewText" class="preview-text"></p>
             </div>
-            <div class="pin-info">
-                <div class="pin-title">Modern Living Room</div>
-                <div class="pin-author">
-                    <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg'); background-size: cover;"></div>
-                    by Sarah Jenkins
-                </div>
+            <div class="preview-actions">
+                <button id="previewPinButton" class="nav-btn primary"><i class="fa-solid fa-thumbtack"></i> Pin</button>
+                <button id="previewDownloadButton" class="nav-btn"><i class="fa-solid fa-download"></i> Download</button>
+                <button id="previewShareButton" class="nav-btn"><i class="fa-solid fa-share-from-square"></i> Share</button>
             </div>
         </div>
+    </div>
 
-        <!-- Card 2 -->
-        <div class="pin">
-            <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Nature">
-            <div class="pin-overlay">
-                <div></div>
-                <button class="save-btn">Save</button>
+    <!-- Modal -->
+    <div id="noteModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Note</h2>
+                <button class="close-modal"><i class="fa-solid fa-times"></i></button>
             </div>
-            <div class="pin-info">
-                <div class="pin-title">Alpine Serenity</div>
-                <div class="pin-author">
-                    <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg'); background-size: cover;"></div>
-                    by Marc Doe
+            <form id="noteForm">
+                <input type="hidden" id="noteId">
+                <div class="form-group">
+                    <input id="noteTitle" class="form-control" placeholder="Title (optional)">
                 </div>
-            </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="pin">
-            <img src="https://images.unsplash.com/photo-1507643179173-01bfe04c832d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Fashion">
-            <div class="pin-overlay">
-                <div></div>
-                <button class="save-btn">Save</button>
-            </div>
-            <div class="pin-info">
-                <div class="pin-title">Urban Street Style</div>
-                <div class="pin-author">
-                    <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/women/65.jpg'); background-size: cover;"></div>
-                    by Elle Mac
+                <div class="form-group">
+                    <textarea id="noteContent" class="form-control" placeholder="Write something aesthetic..."></textarea>
                 </div>
-            </div>
-        </div>
-
-        <!-- Card 4 -->
-        <div class="pin">
-            <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Architecture">
-            <div class="pin-overlay">
-                <div></div>
-                <button class="save-btn">Save</button>
-            </div>
-            <div class="pin-info">
-                <div class="pin-title">Concrete Dreams</div>
-                <div class="pin-author">
-                    <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/men/85.jpg'); background-size: cover;"></div>
-                    by Frank L.
+                <div class="form-group">
+                    <label style="font-weight: 600; margin-bottom: 8px; display: block;">Image (Optional)</label>
+                    <input type="file" id="noteImage" accept="image/*" class="form-control" style="border: none; padding: 0;">
+                    <input type="url" id="noteImageUrl" class="form-control" placeholder="Or enter an image URL">
+                    <img id="imagePreview" class="hidden-el" style="max-width: 100%; max-height: 200px; margin-top: 10px; border-radius: 8px;">
                 </div>
-            </div>
+                <div class="form-group category-group">
+                    <label style="font-weight: 600; margin-bottom: 8px; display: block;">Category</label>
+                    <select id="noteCategory" class="form-control">
+                        <option value="Minimalist">Minimalist</option>
+                        <option value="Interior Design">Interior Design</option>
+                        <option value="Aesthetics">Aesthetics</option>
+                        <option value="Photography">Photography</option>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Architecture">Architecture</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="nav-btn primary" style="width: 100%; justify-content: center; padding: 15px;">Save Note</button>
+            </form>
         </div>
+    </div>
 
-        <!-- Card 5 -->
-        <div class="pin">
-            <img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Art">
-            <div class="pin-overlay">
-                <div></div>
-                <button class="save-btn">Save</button>
-            </div>
-            <div class="pin-info">
-                <div class="pin-title">Abstract Fluidity</div>
-                <div class="pin-author">
-                    <div class="avatar" style="background-image: url('https
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ── Firebase Init ──
+        var firebaseConfig = {
+            apiKey:            "AIzaSyDbsi3PaZ993KuT1pDPMuOfNE8oFNhrAi0",
+            authDomain:        "muse-board-d1a13.firebaseapp.com",
+            projectId:         "muse-board-d1a13",
+            storageBucket:     "muse-board-d1a13.firebasestorage.app",
+            messagingSenderId: "196744972241",
+            appId:             "1:196744972241:web:4e4691b96de283b50782f0",
+            measurementId:     "G-47BMD7B5QR"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        var auth = firebase.auth();
+
+        var userBadge     = document.getElementById('userBadge');
+        var avatarInitial = document.getElementById('avatarInitial');
+        var badgeEmail    = document.getElementById('badgeEmail');
+        var logoutBtn     = document.getElementById('logoutBtn');
+        var navLinks      = document.getElementById('navLinks');
+
+        // Show/hide badge based on auth state
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                var email   = user.email || '';
+                var initial = email ? email.charAt(0).toUpperCase() : (user.displayName ? user.displayName.charAt(0).toUpperCase() : '?');
+                avatarInitial.textContent = initial;
+                badgeEmail.textContent    = email;
+                userBadge.classList.add('visible');
+                navLinks.classList.add('logged-in');   
+            } else {
+                userBadge.classList.remove('visible');
+                navLinks.classList.remove('logged-in');
+            }
+        });
+
+        logoutBtn.addEventListener('click', function() {
+            auth.signOut();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const boardContainer = document.getElementById('boardContainer');
+            const emptyState = document.getElementById('emptyState');
+            const searchInput = document.getElementById('searchInput');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            const noteModal = document.getElementById('noteModal');
+            const previewModal = document.getElementById('previewModal');
+            const noteCloseBtn = noteModal.querySelector('.close-modal');
+            const previewCloseBtn = previewModal.querySelector('.preview-close');
+            const noteForm = document.getElementById('noteForm');
+            const noteIdInput = document.getElementById('noteId');
+            const noteTitleInput = document.getElementById('noteTitle');
+            const noteContentInput = document.getElementById('noteContent');
+            const noteCategoryInput = document.getElementById('noteCategory');
+            const noteImageInput = document.getElementById('noteImage');
+            const noteImageUrlInput = document.getElementById('noteImageUrl');
+            const imagePreview = document.getElementById('imagePreview');
+            const modalTitle = document.getElementById('modalTitle');
+            const heroAddBtn = document.getElementById('heroAddBtn');
+            const heroTotalCount = document.getElementById('heroTotalCount');
+            const heroSavedCount = document.getElementById('heroSavedCount');
+            const previewImage = document.getElementById('previewImage');
+            const previewText = document.getElementById('previewText');
+            const previewCategory = document.getElementById('previewCategory');
+            const previewPinButton = document.getElementById('previewPinButton');
+            const previewDownloadButton = document.getElementById('previewDownloadButton');
+            const previewShareButton = document.getElementById('previewShareButton');
+            const sortOrder = document.getElementById('sortOrder');
+            const backToTop = document.getElementById('backToTop');
+            let currentNoteColor = '#ffffff';
+            let currentPreviewNoteId = null;
+            
+            let currentImageBase64 = null;
+            
+            const filterTags = document.querySelectorAll('.filter-tag');
+
+            let notes = JSON.parse(localStorage.getItem('museboard_notes')) || [];
+            let historyStack = [];
+            let currentCategory = 'All';
+
+            initTheme();
+            renderNotes();
+
+            // --- Theme ---
+            function initTheme() {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                }
+                themeToggle.addEventListener('click', () => {
+                    if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                        document.documentElement.removeAttribute('data-theme');
+                        localStorage.setItem('theme', 'light');
+                        themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                    }
+                });
+            }
+
+            // --- Data ---
+            function saveNotes(newNotes) {
+                historyStack.push(JSON.stringify(notes));
+                if (historyStack.length > 20) historyStack.shift();
+                notes = newNotes;
+                localStorage.setItem('museboard_notes', JSON.stringify(notes));
+                renderNotes();
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                    e.preventDefault();
+                }
+                if (e.key.toLowerCase() === 'n' && !e.target.matches('input, textarea')) {
+                    e.preventDefault();
+                    openModal();
+                }
+            });
+
+            // --- Filters ---
+            filterTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    filterTags.forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    currentCategory = tag.getAttribute('data-cat');
+                    renderNotes();
+                });
+            });
+
+            searchInput.addEventListener('input', () => renderNotes());
+            sortOrder.addEventListener('change', () => renderNotes());
+            heroAddBtn.addEventListener('click', () => openModal());
+            previewCloseBtn.addEventListener('click', () => previewModal.classList.add('hidden-el'));
+            previewModal.addEventListener('click', (event) => {
+                if (event.target === previewModal) previewModal.classList.add('hidden-el');
+            });
+
+            previewPinButton.addEventListener('click', () => {
+                if (!currentPreviewNoteId) return;
+                const idx = notes.findIndex(n => n.id === currentPreviewNoteId);
+                if (idx > -1) {
+                    const updated = [...notes];
+                    updated[idx] = { ...updated[idx], saved: !updated[idx].saved };
+                    saveNotes(updated);
+                    previewModal.classList.add('hidden-el');
+                }
+            });
+
+            previewDownloadButton.addEventListener('click', () => {
+                if (!currentPreviewNoteId) return;
+                const note = notes.find(n => n.id === currentPreviewNoteId);
+                if (note && note.image) {
+                    const link = document.createElement('a');
+                    link.href = note.image;
+                    link.download = `MuseBoard_pin_${note.id}.png`;
+                    link.click();
+                }
+            });
+
+            previewShareButton.addEventListener('click', async () => {
+                if (!currentPreviewNoteId) return;
+                const note = notes.find(n => n.id === currentPreviewNoteId);
+                if (!note) return;
+                const shareText = `${note.title ? note.title + '\n' : ''}${note.content}\n\nCheck out this pin on MuseBoard.`;
+                try {
+                    await navigator.clipboard.writeText(shareText);
+                    alert('Pin copied to clipboard!');
+                } catch (error) {
+                    console.error('Clipboard write failed:', error);
+                    alert('Unable to copy pin. Please try again.');
+                }
+            });
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 280) {
+                    backToTop.classList.add('visible');
+                    backToTop.classList.remove('hidden-el');
+                } else {
+                    backToTop.classList.remove('visible');
+                    backToTop.classList.add('hidden-el');
+                }
+            });
+
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // --- Rendering ---
+            function renderNotes() {
+                boardContainer.innerHTML = '';
+                updateHeroStats();
+                let filtered = notes;
+
+                if (currentCategory !== 'All') {
+                    filtered = filtered.filter(n => n.category === currentCategory);
+                }
+
+                const term = searchInput.value.toLowerCase();
+                if (term) {
+                    filtered = filtered.filter(n => n.content.toLowerCase().includes(term));
+                }
+
+                if (filtered.length === 0) {
+                    emptyState.classList.remove('hidden-el');
+                } else {
+                    emptyState.classList.add('hidden-el');
+                    filtered.sort((a, b) => {
+                        if (sortOrder.value === 'old') return a.timestamp - b.timestamp;
+                        return b.timestamp - a.timestamp;
+                    });
+
+                    filtered.forEach(note => {
+                        const card = document.createElement('div');
+                        card.className = 'pin';
+                        card.style.backgroundColor = note.color;
+                        
+                        const hex = note.color.replace('#', '');
+                        const r = parseInt(hex.substr(0, 2), 16), g = parseInt(hex.substr(2, 2), 16), b = parseInt(hex.substr(4, 2), 16);
+                        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+                        const textColor = (yiq >= 128) ? '#2c2c2c' : '#ffffff';
+                        card.style.color = textColor;
+
+                        const imgHtml = note.image ? `<img src="${note.image}" alt="Note Image" class="pin-image">` : '';
+                        const titleHtml = note.title ? `<h3 class="pin-title">${escapeHTML(note.title)}</h3>` : '';
+
+                        card.innerHTML = `
+                            <div class="pin-badge">${note.category || 'Other'}</div>
+                            ${imgHtml}
+                            ${titleHtml}
+                            <div class="note-content">${escapeHTML(note.content)}</div>
+                            <div class="pin-overlay">
+                                <div></div>
+                                <div class="action-buttons">
+                                    <button class="save-btn edit-btn" data-id="${note.id}" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    ${note.image ? `<button class="save-btn save-img-btn ${note.saved ? 'saved' : ''}" data-id="${note.id}" title="${note.saved ? 'Unsave' : 'Save'}"><i class="fa-solid fa-bookmark"></i></button>` : ''}
+                                    ${note.image ? `<button class="save-btn download-img-btn" data-id="${note.id}" title="Download Image"><i class="fa-solid fa-download"></i></button>` : ''}
+                                    <button class="save-btn delete delete-btn" data-id="${note.id}" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        `;
+                        boardContainer.appendChild(card);
+                        const previewImageEl = card.querySelector('.pin-image');
+                        if (previewImageEl) {
+                            previewImageEl.addEventListener('click', () => openPreview(note));
+                        }
+                    });
+
+                    document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.id)));
+                    document.querySelectorAll('.save-img-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                        const idx = notes.findIndex(n => n.id === e.currentTarget.dataset.id);
+                        if (idx > -1) {
+                            const updated = [...notes];
+                            updated[idx] = { ...updated[idx], saved: !updated[idx].saved };
+                            saveNotes(updated);
+                        }
+                    }));
+                    document.querySelectorAll('.download-img-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                        const imgNote = notes.find(n => n.id === e.currentTarget.dataset.id);
+                        if (imgNote && imgNote.image) {
+                            const link = document.createElement('a');
+                            link.href = imgNote.image;
+                            link.download = `MuseBoard_image_${imgNote.id}.png`;
+                            link.click();
+                        }
+                    }));
+                    document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                        if(confirm('Delete note?')) saveNotes(notes.filter(n => n.id !== e.currentTarget.dataset.id));
+                    }));
+                }
+            }
+
+            function updateHeroStats() {
+                const savedCount = notes.filter(n => n.saved).length;
+                heroTotalCount.textContent = notes.length;
+                heroSavedCount.textContent = savedCount;
+                if (previewPinButton) {
+                    previewPinButton.textContent = previewPinButton.textContent.includes('Unpin') ? 'Unpin' : 'Pin';
+                }
+            }
+
+            function openPreview(note) {
+                currentPreviewNoteId = note.id;
+                previewImage.src = note.image || '';
+                previewText.textContent = note.content;
+                previewCategory.textContent = note.category ? note.category : 'Other';
+                previewPinButton.innerHTML = note.saved ? '<i class="fa-solid fa-thumbtack"></i> Unpin' : '<i class="fa-solid fa-thumbtack"></i> Pin';
+                previewModal.classList.remove('hidden-el');
+            }
+
+            function escapeHTML(str) {
+                return str.replace(/[&<>'"]/g, tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag] || tag));
+            }
+
+            // --- Modal ---
+            function openModal(id = null) {
+                noteImageInput.value = '';
+                imagePreview.src = '';
+                imagePreview.classList.add('hidden-el');
+                currentImageBase64 = null;
+
+                if (id) {
+                    const note = notes.find(n => n.id === id);
+                    if (note) {
+                        modalTitle.textContent = 'Edit Note';
+                        noteIdInput.value = note.id;
+                        noteTitleInput.value = note.title || '';
+                        noteContentInput.value = note.content;
+                        currentNoteColor = note.color;
+                        noteCategoryInput.value = note.category || 'Minimalist';
+                        if (note.image) {
+                            imagePreview.src = note.image;
+                            imagePreview.classList.remove('hidden-el');
+                            currentImageBase64 = note.image;
+                            if (!note.image.startsWith('data:image')) {
+                                noteImageUrlInput.value = note.image;
+                            } else {
+                                noteImageUrlInput.value = '';
+                            }
+                        }
+                    }
+                } else {
+                    modalTitle.textContent = 'Add Note';
+                    noteIdInput.value = '';
+                    noteTitleInput.value = '';
+                    noteContentInput.value = '';
+                    noteCategoryInput.value = currentCategory !== 'All' ? currentCategory : 'Minimalist';
+                    noteImageInput.value = '';
+                    noteImageUrlInput.value = '';
+                    imagePreview.src = '';
+                    imagePreview.classList.add('hidden-el');
+                    const colors = ['#fdfcf8', '#ffe5d9', '#d8e2dc', '#fcd5ce', '#e8e8e4', '#ffffff'];
+                    currentNoteColor = colors[Math.floor(Math.random() * colors.length)];
+                }
+                noteModal.classList.remove('hidden');
+                setTimeout(() => noteContentInput.focus(), 50);
+            }
+
+            noteCloseBtn.addEventListener('click', () => noteModal.classList.add('hidden'));
+
+            noteImageInput.addEventListener('change', (e) => {
+                noteImageUrlInput.value = '';
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert("Please select an image smaller than 2MB to save space.");
+                        noteImageInput.value = '';
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        currentImageBase64 = ev.target.result;
+                        imagePreview.src = currentImageBase64;
+                        imagePreview.classList.remove('hidden-el');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    currentImageBase64 = noteImageUrlInput.value.trim() || null;
+                    if (currentImageBase64) {
+                        imagePreview.src = currentImageBase64;
+                        imagePreview.classList.remove('hidden-el');
+                    } else {
+                        imagePreview.src = '';
+                        imagePreview.classList.add('hidden-el');
+                    }
+                }
+            });
+
+            noteImageUrlInput.addEventListener('input', (e) => {
+                if (e.target.value.trim()) {
+                    currentImageBase64 = e.target.value.trim();
+                    imagePreview.src = currentImageBase64;
+                    imagePreview.classList.remove('hidden-el');
+                    noteImageInput.value = '';
+                } else if (!noteImageInput.files.length) {
+                    currentImageBase64 = null;
+                    imagePreview.src = '';
+                    imagePreview.classList.add('hidden-el');
+                }
+            });
+
+            noteForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = noteIdInput.value;
+                const content = noteContentInput.value.trim();
+                if (!content && !currentImageBase64) return;
+
+                let newNotes = [...notes];
+                if (id) {
+                    const idx = newNotes.findIndex(n => n.id === id);
+                    if (idx > -1) newNotes[idx] = { ...newNotes[idx], title: noteTitleInput.value.trim(), content, color: currentNoteColor, category: noteCategoryInput.value, image: currentImageBase64, timestamp: Date.now() };
+                } else {
+                    newNotes.push({ id: Date.now().toString(), title: noteTitleInput.value.trim(), content, color: currentNoteColor, category: noteCategoryInput.value, image: currentImageBase64, saved: false, timestamp: Date.now() });
+                }
+
+                saveNotes(newNotes);
+                noteModal.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

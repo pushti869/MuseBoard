@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Images - MuseBoard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="Style.css">
+    <style>
+        /* ── User Badge ── */
+        #userBadge {
+            display: none;
+            align-items: center;
+            gap: 9px;
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e0e0e0);
+            border-radius: 50px;
+            padding: 5px 13px 5px 5px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+            cursor: pointer;
+            position: relative;
+            animation: badgeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+            transition: box-shadow 0.2s;
+        }
+        #userBadge:hover { box-shadow: 0 6px 24px rgba(231,111,81,0.18); }
+        #userBadge.visible { display: flex; }
+
+        @keyframes badgeIn {
+            from { opacity: 0; transform: scale(0.85) translateY(-6px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0);    }
+        }
+
+        .avatar-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e76f51, #ffb347);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(231,111,81,0.3);
+            user-select: none;
+        }
+
+        .badge-email {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: 0 10px 32px rgba(0,0,0,0.16);
+            min-width: 175px;
+            overflow: hidden;
+            z-index: 9999;
+            animation: dropIn 0.18s ease both;
+        }
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        #userBadge:hover .badge-dropdown,
+        #userBadge:focus-within .badge-dropdown { display: block; }
+
+        .dropdown-item {
+            padding: 11px 15px;
+            font-size: 0.86rem;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            transition: background 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+        .dropdown-item:hover { background: rgba(231,111,81,0.07); }
+        .dropdown-item.logout {
+            color: #e63946;
+            border-top: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] #userBadge {
+            background: #12141f;
+            border-color: #2b3350;
+        }
+        [data-theme="dark"] .badge-dropdown {
+            background: #141928;
+            border-color: #2d374b;
+        }
+        [data-theme="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+
+        .nav-links.logged-in .auth-only { display: none !important; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="Index.html" class="logo">MuseBoard<span>.</span></a>
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search saved images...">
+        </div>
+        <div class="nav-links" id="navLinks">
+            <button id="themeToggle" class="icon-btn" title="Toggle Dark Mode"><i class="fa-solid fa-moon"></i></button>
+            <a href="login.html" class="nav-btn auth-only">Login</a>
+            <a href="signup.html" class="nav-btn auth-only">Signup</a>
+            <div id="userBadge" tabindex="0">
+                <div class="avatar-circle" id="avatarInitial">?</div>
+                <span class="badge-email" id="badgeEmail">user@example.com</span>
+                <div class="badge-dropdown">
+                    <div class="dropdown-item logout" id="logoutBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Sign Out
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero section matching category.html style -->
+    <section class="hero">
+        <div class="hero-copy">
+            <p class="hero-label">Your Collection</p>
+            <h1>Saved Images</h1>
+            <p>All the pins you've saved — your personal inspiration board.</p>
+            <div class="hero-actions">
+                <a href="Index.html" class="nav-btn primary"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="category.html?category=All" class="nav-btn"><i class="fa-solid fa-grip"></i> Browse All</a>
+            </div>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span id="heroTotalCount">0</span>
+                <p>Total Saved</p>
+            </div>
+            <div class="stat-card">
+                <span id="heroFilteredCount">0</span>
+                <p>Shown</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="gallery-container" id="boardContainer"></div>
+    <div id="emptyState" class="empty-state hidden-el">No saved images yet. Save an image from the main page first.</div>
+
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey:            "AIzaSyDbsi3PaZ993KuT1pDPMuOfNE8oFNhrAi0",
+            authDomain:        "muse-board-d1a13.firebaseapp.com",
+            projectId:         "muse-board-d1a13",
+            storageBucket:     "muse-board-d1a13.firebasestorage.app",
+            messagingSenderId: "196744972241",
+            appId:             "1:196744972241:web:4e4691b96de283b50782f0"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        var auth = firebase.auth();
+
+        var userBadge     = document.getElementById('userBadge');
+        var avatarInitial = document.getElementById('avatarInitial');
+        var badgeEmail    = document.getElementById('badgeEmail');
+        var logoutBtn     = document.getElementById('logoutBtn');
+        var navLinks      = document.getElementById('navLinks');
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                var email   = user.email || '';
+                var initial = email ? email.charAt(0).toUpperCase() : '?';
+                avatarInitial.textContent = initial;
+                badgeEmail.textContent    = email;
+                userBadge.classList.add('visible');
+                navLinks.classList.add('logged-in');
+            } else {
+                userBadge.classList.remove('visible');
+                navLinks.classList.remove('logged-in');
+            }
+        });
+
+        logoutBtn.addEventListener('click', function() { auth.signOut(); });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const boardContainer    = document.getElementById('boardContainer');
+            const emptyState        = document.getElementById('emptyState');
+            const searchInput       = document.getElementById('searchInput');
+            const themeToggle       = document.getElementById('themeToggle');
+            const heroTotalCount    = document.getElementById('heroTotalCount');
+            const heroFilteredCount = document.getElementById('heroFilteredCount');
+
+            let notes = JSON.parse(localStorage.getItem('museboard_notes')) || [];
+
+            initTheme();
+            renderNotes();
+
+            function initTheme() {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                }
+                themeToggle.addEventListener('click', () => {
+                    if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                        document.documentElement.removeAttribute('data-theme');
+                        localStorage.setItem('theme', 'light');
+                        themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                    }
+                });
+            }
+
+            searchInput.addEventListener('input', renderNotes);
+
+            function renderNotes() {
+                boardContainer.innerHTML = '';
+                notes = JSON.parse(localStorage.getItem('museboard_notes')) || [];
+                let filtered = notes.filter(note => note.saved && note.image);
+
+                // Update total saved count (before search filter)
+                heroTotalCount.textContent = filtered.length;
+
+                const term = searchInput.value.toLowerCase();
+                if (term) {
+                    filtered = filtered.filter(note => note.content.toLowerCase().includes(term));
+                }
+
+                heroFilteredCount.textContent = filtered.length;
+
+                if (filtered.length === 0) {
+                    emptyState.classList.remove('hidden-el');
+                    return;
+                }
+
+                emptyState.classList.add('hidden-el');
+                filtered.sort((a, b) => b.timestamp - a.timestamp);
+
+                filtered.forEach(note => {
+                    const card = document.createElement('div');
+                    card.className = 'pin';
+                    card.style.backgroundColor = note.color || '#ffffff';
+
+                    const hex = (note.color || '#ffffff').replace('#', '');
+                    const r = parseInt(hex.substr(0, 2), 16), g = parseInt(hex.substr(2, 2), 16), b = parseInt(hex.substr(4, 2), 16);
+                    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+                    const textColor = (yiq >= 128) ? '#2c2c2c' : '#ffffff';
+                    card.style.color = textColor;
+
+                    const titleHtml = note.title ? `<h3 class="pin-title">${escapeHTML(note.title)}</h3>` : '';
+
+                    card.innerHTML = `
+                        <div class="pin-badge">${note.category || 'Saved'}</div>
+                        <img src="${note.image}" alt="Saved image" class="pin-image" style="max-height:none;">
+                        <div style="padding: 16px 18px 18px;">
+                            ${titleHtml}
+                            <div class="note-content">${escapeHTML(note.content)}</div>
+                        </div>
+                        <div class="pin-overlay">
+                            <div></div>
+                            <div class="action-buttons">
+                                <button class="save-btn download-img-btn" data-id="${note.id}" title="Download Image"><i class="fa-solid fa-download"></i></button>
+                                <button class="save-btn delete delete-btn" data-id="${note.id}" title="Remove from Saved"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    boardContainer.appendChild(card);
+                });
+
+                document.querySelectorAll('.download-img-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                    const note = notes.find(n => n.id === e.currentTarget.dataset.id);
+                    if (note && note.image) {
+                        const link = document.createElement('a');
+                        link.href = note.image;
+                        link.download = `MuseBoard_saved_${note.id}.png`;
+                        link.click();
+                    }
+                }));
+
+                document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                    const index = notes.findIndex(n => n.id === e.currentTarget.dataset.id);
+                    if (index > -1) {
+                        notes[index] = { ...notes[index], saved: false };
+                        localStorage.setItem('museboard_notes', JSON.stringify(notes));
+                        renderNotes();
+                    }
+                }));
+            }
+
+            function escapeHTML(str) {
+                return String(str || '').replace(/[&<>"']/g, tag => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[tag] || tag));
+            }
+        });
+    </script>
+</body>
+</html>

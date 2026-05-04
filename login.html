@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MuseBoard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fdfcf8;
+            --text: #222;
+            --muted: #6b6b6b;
+            --accent: #e63946;
+            --card: #ffffff;
+            --border: #e0e0e0;
+            --radius: 18px;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #11121a;
+                --text: #f4f4f8;
+                --muted: #b2b2c6;
+                --accent: #ff7f7f;
+                --card: #181b2b;
+                --border: #2c2f45;
+            }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { position: relative; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; transition: background 0.3s, color 0.3s; }
+        a { color: var(--accent); text-decoration: none; }
+        .page { width: 100%; max-width: 420px; background: var(--card); border-radius: var(--radius); box-shadow: 0 18px 50px rgba(0,0,0,0.25); overflow: hidden; margin: auto; border: 1px solid rgba(255,255,255,0.06); }
+        .page-header { padding: 32px 32px 24px; background: rgba(255, 244, 240, 0.95); border-bottom: 1px solid var(--border); }
+        .page-header h1 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
+        .page-header p { color: var(--muted); line-height: 1.6; }
+        .page-body { padding: 32px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text); }
+        input { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 14px; background: rgba(250,249,247,0.95); color: var(--text); font-size: 1rem; }
+        input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(255,127,127,0.12); }
+        @media (prefers-color-scheme: dark) {
+            .page-header { background: rgba(36, 39, 61, 0.95); }
+            input { background: #121424; border-color: var(--border); }
+            .page-body { background: transparent; }
+        }
+        .primary-btn { width: 100%; padding: 14px 16px; border: none; border-radius: 14px; background: var(--accent); color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, opacity 0.2s ease; }
+        .primary-btn:hover { opacity: 0.95; transform: translateY(-1px); }
+        .primary-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .footer-text { margin-top: 20px; text-align: center; color: var(--muted); font-size: 0.95rem; }
+        .footer-text a { font-weight: 600; }
+        .top-link { position: absolute; top: 24px; right: 24px; color: var(--muted); font-size: 0.95rem; }
+        .top-link a { font-weight: 600; color: var(--accent); }
+        .error-text { color: #e63946; }
+        .success-text { color: #2a9d8f; }
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="page-header">
+            <h1>Welcome Back</h1>
+            <p>Login to continue exploring inspiration on MuseBoard.</p>
+        </div>
+        <div class="page-body">
+            <form id="loginForm" action="#">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="primary-btn" id="loginBtn">Login</button>
+            </form>
+            <div id="loginMessage" class="footer-text"></div>
+            <div class="footer-text">
+                New to MuseBoard? <a href="Signup.html">Create an account</a>
+            </div>
+        </div>
+    </div>
+    <div class="top-link"><a href="Index.html">← Back to Home</a></div>
+
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey:            "AIzaSyDbsi3PaZ993KuT1pDPMuOfNE8oFNhrAi0",
+            authDomain:        "muse-board-d1a13.firebaseapp.com",
+            projectId:         "muse-board-d1a13",
+            storageBucket:     "muse-board-d1a13.firebasestorage.app",
+            messagingSenderId: "196744972241",
+            appId:             "1:196744972241:web:4e4691b96de283b50782f0",
+            measurementId:     "G-47BMD7B5QR"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        var auth = firebase.auth();
+        var db   = firebase.firestore();
+
+        // Sign out any existing session so the login page always stays visible
+        auth.signOut();
+
+        var form       = document.getElementById("loginForm");
+        var emailInput = document.getElementById("loginEmail");
+        var passInput  = document.getElementById("loginPassword");
+        var messageEl  = document.getElementById("loginMessage");
+        var loginBtn   = document.getElementById("loginBtn");
+
+        function showMessage(text, type) {
+            messageEl.textContent = text;
+            messageEl.className = "footer-text " + (type === "success" ? "success-text" : "error-text");
+        }
+        function resetBtn() {
+            loginBtn.disabled    = false;
+            loginBtn.textContent = "Login";
+        }
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            messageEl.textContent = "";
+            messageEl.className   = "footer-text";
+
+            var email    = emailInput.value.trim();
+            var password = passInput.value;
+
+            if (!email || !password) {
+                showMessage("Please fill in all fields.", "error");
+                return;
+            }
+
+            loginBtn.disabled  = true;
+            loginBtn.innerHTML = '<span class="spinner"></span>Logging in…';
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(function (cred) {
+                    return db.collection("users").doc(cred.user.uid).set({
+                        email:       cred.user.email,
+                        lastLoginAt: new Date().toISOString()
+                    }, { merge: true });
+                })
+                .then(function () {
+                    showMessage("Login successful! Redirecting…", "success");
+                    setTimeout(function () { window.location.href = "Index.html"; }, 1000);
+                })
+                .catch(function (error) {
+                    var msgs = {
+                        "auth/user-not-found":        "No account found with this email.",
+                        "auth/wrong-password":        "Incorrect password. Please try again.",
+                        "auth/invalid-email":         "Please enter a valid email address.",
+                        "auth/too-many-requests":     "Too many failed attempts. Try again later.",
+                        "auth/invalid-credential":    "Invalid email or password.",
+                        "auth/network-request-failed":"Network error. Check your connection."
+                    };
+                    showMessage(msgs[error.code] || error.message, "error");
+                    console.error("Login error:", error.code, error.message);
+                    resetBtn();
+                });
+        });
+    </script>
+</body>
+</html>
